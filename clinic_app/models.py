@@ -40,10 +40,10 @@ class Clinics(models.Model):
     image = models.ImageField(verbose_name='Фото')
     logo = models.ImageField(verbose_name='Лого')
     #doctors =
-    rating = models.ForeignKey(Review, on_delete=models.CASCADE(), verbose_name='Рейтинг')
-    category = models.ForeignKey(Categories, on_delete=models.CASCADE(), verbose_name='Категории')
-    services = models.ForeignKey(Services, on_delete=models.CASCADE(), verbose_name='Услуги')
-    schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE(), verbose_name='График работы')
+    rating = models.ForeignKey(Review, on_delete=models.CASCADE, verbose_name='Рейтинг')
+    category = models.ForeignKey(Categories, on_delete=models.CASCADE, verbose_name='Категории')
+    services = models.ForeignKey(Services, on_delete=models.CASCADE, verbose_name='Услуги')
+    schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE, verbose_name='График работы')
     created_at = models.DateField(verbose_name='Дата создания')
 
 
