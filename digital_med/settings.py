@@ -34,6 +34,7 @@ INSTALLED_APPS = [
 
     # apps
     'clinic_app',
+    'users_app',
 ]
 
 MIDDLEWARE = [
@@ -131,7 +132,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# AUTH_USER_MODEL = os.getenv('AUTH_USER_MODEL')
+AUTH_USER_MODEL = os.getenv('AUTH_USER_MODEL')
 
 
 # smtp connect
@@ -150,8 +151,12 @@ CELERYD_MAX_TASKS_PER_CHILD = 1000
 CELERY_TASK_TIME_LIMIT = 300
 
 # RabbitMQ connection
-CELERY_BROKER_URL = 'amqp://guest:guest@rabbit:5672//'
-CELERY_RESULT_BACKEND = 'rpc://'  # или Redis, если хочешь
+# CELERY_BROKER_URL = 'amqp://guest:guest@rabbit:5672//'
+# CELERY_RESULT_BACKEND = 'rpc://'  # или Redis, если хочешь
+
+# Redis broker and backend
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/1'  # Было: redis://127.0.0.1:6379:6379/1
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/1'  # Было: redis://127.0.0.1:6379:6379/1
 
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
@@ -159,17 +164,34 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'  # Или 'Europe/Moscow'
 
 
-# cache - connection
+# docker - cache - connection
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django_redis.cache.RedisCache',
+#         'LOCATION': 'redis://redis:6379/1',
+#         'OPTIONS': {
+#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+#         }
+#     }
+# }
+
 CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://redis:6379/1',
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",  # Adjust as needed
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     }
 }
 
+
+# connect session
+SESSION_COOKIE_AGE = 3600  # 1 час
+SESSION_SAVE_EVERY_REQUEST = True
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'  # Или 'django.contrib.sessions.backends.signed_cookies'
+SESSION_COOKIE_SECURE = False  # Для разработки (True для HTTPS)
 
 # LOGGING connection
 LOGGING = {

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Подтверждение email</title>
+    <style>
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    {% if form.errors %}
+    <div class="error">
+        {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="email" value="{{ email }}">
+
+        <div>
+            <label for="id_code">Код подтверждения:</label>
+            {{ form.code }}
+            {% if form.code.errors %}
+                <div class="error">{{ form.code.errors }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit">Подтвердить</button>
+    </form>
+
+    <p>Код отправлен на: {{ email }}</p>
+</body>
+</html>
