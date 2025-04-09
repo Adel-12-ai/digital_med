@@ -84,10 +84,7 @@
 			  	</li>
 			   <li class="nav-item"><a class="nav-link" href="contact.html">Наши контакты</a></li>
 
-				{% if user.is_authenticated %}
-					<li class="nav-item"><a class="nav-link" href="{% url 'users_app:logout_user' %}">Выход</a></li>
-
-				{% else %}
+				{% if not user.is_authenticated %}
 					<li class="nav-item"><a class="nav-link" href="{% url 'users_app:sign_user' %}">Вход</a></li>
 				{% endif %}
 			</ul>
