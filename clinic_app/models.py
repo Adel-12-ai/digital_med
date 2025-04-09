@@ -1,11 +1,9 @@
-from datetime import datetime
-
+from datetime import date
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.text import slugify
 
-from doctors_app.models import Doctor
 
 User = get_user_model()
 
@@ -25,7 +23,7 @@ class WeekDay(models.Model):
 
 
 class ScheduleClinic(models.Model):
-    clinic = models.ForeignKey('Clinic', on_delete=models.CASCADE, related_name='schedules')
+    clinic = models.ForeignKey('Clinic', on_delete=models.CASCADE, related_name='clinic_schedules')
     weekday = models.ForeignKey(WeekDay, on_delete=models.CASCADE, verbose_name='День недели')
     open_time = models.TimeField(verbose_name='Время открытия')
     close_time = models.TimeField(verbose_name='Время закрытия')
@@ -138,7 +136,7 @@ class Service(models.Model):
         verbose_name='Клиника'
     )
     doctors = models.ManyToManyField(
-        Doctor,
+        'doctors_app.Doctor',
         related_name='services',
         verbose_name='Врачи',
         blank=True
@@ -185,7 +183,7 @@ class ReviewClinic(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='reviews',
+        related_name='clinic_reviews',
         verbose_name='Пользователь'
     )
     clinic = models.ForeignKey(

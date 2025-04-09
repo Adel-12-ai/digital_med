@@ -4,8 +4,6 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth import get_user_model
 
-from clinic_app.models import Clinic, Service, WeekDay
-
 User = get_user_model()
 
 '''
@@ -14,8 +12,8 @@ doctor = Doctor.objects.get(id=1)
 schedule_doctor = doctor.schedules.all()
 '''
 class ScheduleDoctor(models.Model):
-    doctor = models.ForeignKey('Doctor', on_delete=models.CASCADE, related_name='schedules')
-    weekday = models.ForeignKey(WeekDay, on_delete=models.CASCADE, verbose_name='День недели')
+    doctor = models.ForeignKey('Doctor', on_delete=models.CASCADE, related_name='docotr_schedules')
+    weekday = models.ForeignKey('clinic_app.WeekDay', on_delete=models.CASCADE, verbose_name='День недели')
     open_time = models.TimeField(verbose_name='Выход на работу(во сколько?)')
     close_time = models.TimeField(verbose_name='Уход с работы(во сколько?)')
     is_working = models.BooleanField(default=True, verbose_name='Рабочий день?')
@@ -23,7 +21,7 @@ class ScheduleDoctor(models.Model):
     class Meta:
         verbose_name = 'График работы'
         verbose_name_plural = 'Графики работы'
-        unique_together = ('clinic', 'weekday')
+        unique_together = ('doctor', 'weekday')
         ordering = ['weekday__order']
 
     def __str__(self):
@@ -48,7 +46,7 @@ class Doctor(models.Model):
         verbose_name='Пользователь'
     )
     clinics = models.ManyToManyField(
-        Clinic,
+        'clinic_app.Clinic',
         related_name='doctors',
         verbose_name='Клиники'
     )
@@ -102,13 +100,13 @@ class Appointment(models.Model):
         verbose_name='Пациент'
     )
     clinic = models.ForeignKey(
-        Clinic,
+        'clinic_app.Clinic',
         on_delete=models.CASCADE,
         related_name='appointments',
         verbose_name='Клиника'
     )
     service = models.ForeignKey(
-        Service,
+        'clinic_app.Service',
         on_delete=models.PROTECT,
         related_name='appointments',
         verbose_name='Услуга'
@@ -173,7 +171,7 @@ class ReviewDoctor(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='reviews',
+        related_name='doctor_reviews',
         verbose_name='Пользователь'
     )
     doctor = models.ForeignKey(
@@ -199,7 +197,7 @@ class ReviewDoctor(models.Model):
     class Meta:
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
-        unique_together = ('user', 'clinic')
+        unique_together = ('user', 'doctor')
         ordering = ['-created_at']
 
         indexes = [
