@@ -15,12 +15,21 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email=None, password=None):
-        user = self.create_user(email=email, password=password)
+        """
+        Создание суперпользователя с обязательным паролем.
+        """
+        if not email:
+            raise ValueError('Необходимо указать email!')
+        if not password:
+            raise ValueError('Необходимо указать пароль для суперпользователя!')
+
+        # Создаем пользователя без пароля
+        user = self.model(email=email)
+        # Устанавливаем пароль через метод set_password
+        user.set_password(password)
         user.is_staff = True
         user.is_superuser = True
-
-        if password:
-            user.set_password(password)
+        user.is_active = True  # Обязательно активируем суперпользователя
         user.save(using=self._db)
         return user
 
@@ -28,6 +37,7 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True, verbose_name='email')
     is_active = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

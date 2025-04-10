@@ -9,10 +9,10 @@ User = get_user_model()
 '''
 Вот так вот получаем(для заметки написал)
 doctor = Doctor.objects.get(id=1)
-schedule_doctor = doctor.schedules.all()
+schedule_doctor = doctor.doctor_schedules.all()
 '''
 class ScheduleDoctor(models.Model):
-    doctor = models.ForeignKey('Doctor', on_delete=models.CASCADE, related_name='docotr_schedules')
+    doctor = models.ForeignKey('Doctor', on_delete=models.CASCADE, related_name='doctor_schedules')
     weekday = models.ForeignKey('clinic_app.WeekDay', on_delete=models.CASCADE, verbose_name='День недели')
     open_time = models.TimeField(verbose_name='Выход на работу(во сколько?)')
     close_time = models.TimeField(verbose_name='Уход с работы(во сколько?)')
