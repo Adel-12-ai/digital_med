@@ -59,11 +59,11 @@
 		  	<button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarmain" aria-controls="navbarmain" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="icofont-navigation-menu"></span>
 		  </button>
-	  
+
 		  <div class="collapse navbar-collapse" id="navbarmain">
 			<ul class="navbar-nav ml-auto">
 			  <li class="nav-item active">
-				<a class="nav-link" href="index.html">Главная</a>
+				<a class="nav-link" href="{% url 'clinic_app:clinics' %}">Главная</a>
 			  </li>
 			   <li class="nav-item"><a class="nav-link" href="about.html">Про нас</a></li>
 			    <li class="nav-item"><a class="nav-link" href="service.html">Сервисы</a></li>
@@ -80,14 +80,9 @@
 					</ul>
 			  	</li>
 
-				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="blog-sidebar.html" id="dropdown05" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Category <i class="icofont-thin-down"></i></a>
-					<ul class="dropdown-menu" aria-labelledby="dropdown05">
-						<li><a class="dropdown-item" href="blog-sidebar.html">Category</a></li>
+				{% block category %}
 
-						<li><a class="dropdown-item" href="blog-single.html">Category</a></li>
-					</ul>
-			  	</li>
+				{% endblock category %}
 
 			   <li class="nav-item dropdown">
 					<ul class="dropdown-menu" aria-labelledby="dropdown05">
@@ -103,7 +98,7 @@
 		</div>
 	</nav>
 </header>
-	
+
 
 
 
@@ -116,10 +111,10 @@
 					<div class="divider mb-3"></div>
 					<span class="text-uppercase text-sm letter-spacing ">Добро пожаловать в наш Сервис</span>
 					<h1 class="mb-3 mt-3">DIGITAL MED</h1>
-					
+
 					<p class="mb-4 pr-5">Добро пожаловать в наш Сервис</p>
 					<div class="btn-container ">
-						<a href="appoinment.html" target="_blank" class="btn btn-main-2 btn-icon btn-round-full">Make appoinment <i class="icofont-simple-right ml-2  "></i></a>
+						<a href="appoinment.html" target="_blank" class="btn btn-main-2 btn-icon btn-round-full">Записаться на консультацию <i class="icofont-simple-right ml-2  "></i></a>
 					</div>
 				</div>
 			</div>
@@ -140,7 +135,7 @@
 						<p class="mb-4">Get ALl time support for emergency.We have introduced the principle of family medicine.</p>
 						<a href="appoinment.html" class="btn btn-main btn-round-full">Make a appoinment</a>
 					</div>
-				
+
 					<div class="feature-item mb-5 mb-lg-0">
 						<div class="feature-icon mb-4">
 							<i class="icofont-ui-clock"></i>
@@ -153,7 +148,7 @@
 		                    <li class="d-flex justify-content-between">Sat - sun : <span>10:00 - 17:00</span></li>
 		                </ul>
 					</div>
-				
+
 					<div class="feature-item mb-5 mb-lg-0">
 						<div class="feature-icon mb-4">
 							<i class="icofont-support"></i>

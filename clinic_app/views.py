@@ -7,15 +7,15 @@ class ClinicListView(ListView):
     model = Clinic
     template_name = 'clinic_app/clinics.html'
     context_object_name = 'clinics'
-    paginate_by = 9  # Уменьшил для лучшего отображения
+    paginate_by = 9
 
     def get_queryset(self):
         queryset = super().get_queryset().select_related('category').prefetch_related('services')
 
-        # Фильтрация по категории
-        category_slug = self.kwargs.get('category_slug')
-        if category_slug:
-            queryset = queryset.filter(category__slug=category_slug)
+        # Фильтрация по категории из GET-параметра
+        self.category_slug = self.request.GET.get('category')
+        if self.category_slug:
+            queryset = queryset.filter(category__slug=self.category_slug)
 
         # Только активные клиники
         queryset = queryset.filter(is_active=True)
@@ -24,10 +24,14 @@ class ClinicListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        category_slug = self.kwargs.get('category_slug')
 
-        if category_slug:
-            context['current_category'] = get_object_or_404(Category, slug=category_slug)
+        # Все активные категории для dropdown меню
+        context['categories'] = Category.objects.filter(is_active=True)
+
+        # Текущая выбранная категория
+        if hasattr(self, 'category_slug') and self.category_slug:
+            context['current_category'] = get_object_or_404(Category, slug=self.category_slug)
+            context['hide_header'] = True  # Флаг для скрытия шапки
 
         return context
 
@@ -43,3 +47,12 @@ class ClinicDetailView(DetailView):
             'services',
             'reviews__user'
         )
+
+
+class CategoryListView(ListView):
+    model = Category
+    template_name = 'clinic_app/categories.html'
+    context_object_name = 'categories'
+
+    def get_queryset(self):
+        return Category.objects.filter(is_active=True)

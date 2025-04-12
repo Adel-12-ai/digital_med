@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Categories</title>
+
+      <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="{% static 'clinic_app//images/favicon.ico' %}" />
+
+  <!-- bootstrap.min css -->
+  <link rel="stylesheet" href="{% static 'clinic_app/plugins/bootstrap/css/bootstrap.min.css' %}">
+  <!-- Icon Font Css -->
+  <link rel="stylesheet" href="{% static 'clinic_app/plugins/icofont/icofont.min.css' %}">
+  <!-- Slick Slider  CSS -->
+  <link rel="stylesheet" href="{% static 'clinic_app/plugins/slick-carousel/slick/slick.css' %}">
+  <link rel="stylesheet" href="{% static 'clinic_app/plugins/slick-carousel/slick/slick-theme.css' %}">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="{% static 'clinic_app/css/style.css' %}">
+
+</head>
+<body>
+
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" data-toggle="dropdown"
+       aria-haspopup="true" aria-expanded="false">
+       <i class="icofont-medical-sign-alt mr-2"></i> Категории клиник <i class="icofont-thin-down"></i>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
+        <li>
+            <a class="dropdown-item {% if not request.GET.category %}active-category{% endif %}"
+               href="{% url 'clinic_app:clinics' %}">
+               <i class="icofont-list mr-2"></i> Все категории
+            </a>
+        </li>
+        <li><div class="dropdown-divider"></div></li>
+
+        {% for category in categories %}
+        <li>
+            <a class="dropdown-item {% if request.GET.category == category.slug %}active-category{% endif %}"
+               href="{% url 'clinic_app:clinics' %}?category={{ category.slug }}">
+               <i class="icofont-{{ forloop.counter|add:10 }} mr-2"></i> {{ category.name }}
+            </a>
+        </li>
+        {% if not forloop.last %}
+        <li><div class="dropdown-divider"></div></li>
+        {% endif %}
+        {% empty %}
+        <li><a class="dropdown-item disabled" href="#"><i class="icofont-close-circled mr-2"></i> Нет категорий</a></li>
+        {% endfor %}
+    </ul>
+</li>
+
+
+<!-- Main jQuery -->
+    <script src="{% static 'clinic_app/plugins/jquery/jquery.js' %}"></script>
+    <!-- Bootstrap 4.3.2 -->
+    <script src="{% static 'clinic_app/plugins/bootstrap/js/popper.js' %}"></script>
+    <script src="{% static 'clinic_app/plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'clinic_app/plugins/counterup/jquery.easing.js' %}"></script>
+    <!-- Slick Slider -->
+    <script src="{% static 'clinic_app/plugins/slick-carousel/slick/slick.min.js' %}"></script>
+    <!-- Counterup -->
+    <script src="{% static 'clinic_app/plugins/counterup/jquery.waypoints.min.js' %}"></script>
+
+    <script src="{% static 'clinic_app/plugins/shuffle/shuffle.min.js' %}"></script>
+    <script src="{% static 'clinic_app/plugins/counterup/jquery.counterup.min.js' %}"></script>
+    <!-- Google Map -->
+    <script src="{% static 'clinic_app/plugins/google-map/map.js' %}"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkeLMlsiwzp6b3Gnaxd86lvakimwGA6UA&callback=initMap"></script>
+
+    <script src="{% static 'clinic_app/js/script.js' %}"></script>
+    <script src="{% static 'clinic_app/js/contact.js' %}"></script>
+
+</body>
+</html>
