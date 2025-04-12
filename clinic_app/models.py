@@ -7,7 +7,10 @@ from django.utils.text import slugify
 
 User = get_user_model()
 
-
+'''
+clinic = Clinic.objects.get(id=1)
+schedule_clinic = clinic.clinic_schedules.all()
+'''
 class WeekDay(models.Model):
     name = models.CharField(max_length=15, verbose_name='День недели')
     short_name = models.CharField(max_length=2, verbose_name='Сокращение')
@@ -43,7 +46,7 @@ class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название категории')
     slug = models.SlugField(max_length=100, unique=True, verbose_name='URL-имя')
     description = models.TextField(max_length=500, verbose_name='Описание категории')
-    image = models.ImageField(upload_to='categories/', default=None, verbose_name='Фото категории')
+    image = models.ImageField(upload_to='categories/', verbose_name='Фото категории')
     is_active = models.BooleanField(default=True, verbose_name='Активна?')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
@@ -75,8 +78,8 @@ class Clinic(models.Model):
     location = models.TextField(verbose_name='Адрес')
     contact_phone = models.CharField(max_length=20, verbose_name='Контактный телефон')
     contact_email = models.EmailField(verbose_name='Контактный email')
-    image = models.ImageField(upload_to='clinics/', default=None, verbose_name='Фото клиники')
-    logo = models.ImageField(upload_to='clinics/logos/', default=None, verbose_name='Логотип')
+    image = models.ImageField(upload_to='clinics/', verbose_name='Фото клиники')
+    logo = models.ImageField(upload_to='clinics/logos/', verbose_name='Логотип')
     rating = models.DecimalField(
         max_digits=3,
         decimal_places=1,
@@ -141,6 +144,7 @@ class Service(models.Model):
         verbose_name='Врачи',
         blank=True
     )
+    image = models.ImageField(upload_to='service_image/', verbose_name='Изображение(как будет примерно обслужоватся клиент)')
     is_active = models.BooleanField(default=True, verbose_name='Активна?')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
