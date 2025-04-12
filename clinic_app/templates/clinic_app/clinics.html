@@ -1,21 +1,137 @@
+{% extends 'clinic_app/index.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-{% if clinics %}
-    <ul>
-    {% for clinic in clinics %}
-        <li><a href="/polls/{{ clinic.id }}/">{{ clinic.name }}</a></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No clinics are available.</p>
-{% endif %}
+{% block style %}
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="{% static 'clinic_app//images/favicon.ico' %}" />
 
-</body>
-</html>
+  <!-- bootstrap.min css -->
+  <link rel="stylesheet" href="{% static 'clinic_app/plugins/bootstrap/css/bootstrap.min.css' %}">
+  <!-- Icon Font Css -->
+  <link rel="stylesheet" href="{% static 'clinic_app/plugins/icofont/icofont.min.css' %}">
+  <!-- Slick Slider  CSS -->
+  <link rel="stylesheet" href="{% static 'clinic_app/plugins/slick-carousel/slick/slick.css' %}">
+  <link rel="stylesheet" href="{% static 'clinic_app/plugins/slick-carousel/slick/slick-theme.css' %}">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="{% static 'clinic_app/css/style.css' %}">
+	{% endblock style %}
+
+{% block clinic %}
+
+<section class="section service-2">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <div class="section-title">
+                    <h2 class="mb-4">Наши клиники</h2>
+                    <div class="divider mx-auto my-4"></div>
+                    <p>Лучшие медицинские учреждения с проверенными специалистами</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            {% for clinic in clinics %}
+            <div class="col-lg-4 col-md-6 col-sm-6 mb-5">
+                <div class="service-block">
+                    <div class="card border-0 shadow-sm">
+                        {% if clinic.image %}
+                        <img src="{{ clinic.image.url }}" alt="{{ clinic.name }}" class="card-img-top img-fluid" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                        <div class="placeholder-image bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <span class="text-muted">Нет изображения</span>
+                        </div>
+                        {% endif %}
+
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title mb-0">{{ clinic.name }}</h5>
+                                {% if clinic.is_verified %}
+                                <span class="badge badge-success">Проверенная</span>
+                                {% endif %}
+                            </div>
+
+                            <p class="card-text text-muted">{{ clinic.short_description|truncatechars:100 }}</p>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-warning">
+                                    ★ {{ clinic.rating|default:"0.0" }}
+                                </span>
+                                <a href="{% url 'clinic_app:clinic' clinic.pk %}" class="btn btn-link p-0">
+                                    Подробнее <i class="icofont-simple-right ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <div class="alert alert-info">Клиники не найдены</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if is_paginated %}
+        <div class="row">
+            <div class="col-12 mt-4">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                        {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock clinic %}
+
+    {% block js %}
+    <!-- Main jQuery -->
+    <script src="{% static 'clinic_app/plugins/jquery/jquery.js' %}"></script>
+    <!-- Bootstrap 4.3.2 -->
+    <script src="{% static 'clinic_app/plugins/bootstrap/js/popper.js' %}"></script>
+    <script src="{% static 'clinic_app/plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'clinic_app/plugins/counterup/jquery.easing.js' %}"></script>
+    <!-- Slick Slider -->
+    <script src="{% static 'clinic_app/plugins/slick-carousel/slick/slick.min.js' %}"></script>
+    <!-- Counterup -->
+    <script src="{% static 'clinic_app/plugins/counterup/jquery.waypoints.min.js' %}"></script>
+
+    <script src="{% static 'clinic_app/plugins/shuffle/shuffle.min.js' %}"></script>
+    <script src="{% static 'clinic_app/plugins/counterup/jquery.counterup.min.js' %}"></script>
+    <!-- Google Map -->
+    <script src="{% static 'clinic_app/plugins/google-map/map.js' %}"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkeLMlsiwzp6b3Gnaxd86lvakimwGA6UA&callback=initMap"></script>
+
+    <script src="{% static 'clinic_app/js/script.js' %}"></script>
+    <script src="{% static 'clinic_app/js/contact.js' %}"></script>
+	{% endblock js %}
+
+
+

@@ -1,0 +1,261 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport"
+		  content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>clinic</title>
+	  <!-- Favicon -->
+	  <link rel="shortcut icon" type="image/x-icon" href="{% static 'clinic_app//images/favicon.ico' %}" />
+
+	  <!-- bootstrap.min css -->
+	  <link rel="stylesheet" href="{% static 'clinic_app/plugins/bootstrap/css/bootstrap.min.css' %}">
+	  <!-- Icon Font Css -->
+	  <link rel="stylesheet" href="{% static 'clinic_app/plugins/icofont/icofont.min.css' %}">
+	  <!-- Slick Slider  CSS -->
+	  <link rel="stylesheet" href="{% static 'clinic_app/plugins/slick-carousel/slick/slick.css' %}">
+	  <link rel="stylesheet" href="{% static 'clinic_app/plugins/slick-carousel/slick/slick-theme.css' %}">
+
+	  <!-- Main Stylesheet -->
+	  <link rel="stylesheet" href="{% static 'clinic_app/css/style.css' %}">
+</head>
+<body>
+
+
+<section class="page-title bg-1">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="block text-center">
+                    <h1 class="text-capitalize mb-3 text-lg">{{ clinic.name }}</h1>
+                    <p class="text-white-50">{{ clinic.short_description }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section doctor-single">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-8">
+                <div class="doctor-details mt-4 mb-5">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h2 class="mb-0">{{ clinic.name }}</h2>
+                                <div>
+                                    <span class="badge badge-{% if clinic.is_active %}success{% else %}danger{% endif %}">
+                                        {% if clinic.is_active %}Активна{% else %}Неактивна{% endif %}
+                                    </span>
+                                    {% if clinic.is_verified %}
+                                    <span class="badge badge-primary ml-2">Проверенная</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="rating mb-4">
+                                <span class="h4 text-warning">
+                                    ★ {{ clinic.rating|default:"0.0" }}
+                                </span>
+                                <small class="text-muted">(на основе отзывов)</small>
+                            </div>
+
+                            <div class="media mb-4">
+                                <div class="media-body">
+                                    <h5 class="mt-0">О клинике</h5>
+                                    <p>{{ clinic.description }}</p>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="media mb-3">
+                                        <i class="icofont-location-pin mr-3 text-primary"></i>
+                                        <div class="media-body">
+                                            <h6 class="mt-0">Адрес</h6>
+                                            <p>{{ clinic.location }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="media mb-3">
+                                        <i class="icofont-phone mr-3 text-primary"></i>
+                                        <div class="media-body">
+                                            <h6 class="mt-0">Телефон</h6>
+                                            <p>{{ clinic.contact_phone }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="media mb-3">
+                                        <i class="icofont-email mr-3 text-primary"></i>
+                                        <div class="media-body">
+                                            <h6 class="mt-0">Email</h6>
+                                            <p>{{ clinic.contact_email }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="media mb-3">
+                                        <i class="icofont-certificate-alt-1 mr-3 text-primary"></i>
+                                        <div class="media-body">
+                                            <h6 class="mt-0">Категория</h6>
+                                            <p>{{ clinic.category.name }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="gallery mb-4">
+                                {% if clinic.image %}
+                                <img src="{{ clinic.image.url }}" alt="{{ clinic.name }}" class="img-fluid rounded mb-3">
+                                {% endif %}
+                                {% if clinic.logo %}
+                                <div class="text-center">
+                                    <img src="{{ clinic.logo.url }}" alt="Логотип {{ clinic.name }}" class="img-fluid" style="max-height: 100px;">
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <h5 class="mb-3">График работы</h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>День недели</th>
+                                            <th>Часы работы</th>
+                                            <th>Статус</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for schedule in clinic.clinic_schedules.all %}
+                                        <tr>
+                                            <td>{{ schedule.weekday.name }}</td>
+                                            <td>{{ schedule.open_time|time:"H:i" }} - {{ schedule.close_time|time:"H:i" }}</td>
+                                            <td>
+                                                {% if schedule.is_working %}
+                                                <span class="badge badge-success">Рабочий</span>
+                                                {% else %}
+                                                <span class="badge badge-secondary">Выходной</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="3" class="text-center">График работы не указан</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="services mb-5">
+                    <h4 class="mb-4">Услуги клиники</h4>
+                    <div class="row">
+                        {% for service in clinic.services.all %}
+                        <div class="col-lg-6 mb-4">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ service.name }}</h5>
+                                    <p class="card-text text-muted">{{ service.description|truncatechars:100 }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-primary font-weight-bold">{{ service.price }} ₽</span>
+                                        <small class="text-muted">{{ service.duration }} мин</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="col-12">
+                            <div class="alert alert-info">Услуги не добавлены</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="reviews">
+                    <h4 class="mb-4">Отзывы</h4>
+                    {% for review in clinic.reviews.all %}
+                    {% if review.moderation_status == 'approved' %}
+                    <div class="media mb-4">
+                        <div class="media-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <h6 class="mt-0">{{ review.user.get_full_name|default:review.user.username }}</h6>
+                                <span class="text-warning">★ {{ review.rating }}</span>
+                            </div>
+                            <p>{{ review.text }}</p>
+                            <small class="text-muted">{{ review.created_at|date:"d.m.Y H:i" }}</small>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% empty %}
+                    <div class="alert alert-info">Отзывов пока нет</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-4">
+                <div class="sidebar-widget schedule-widget mt-4">
+                    <h5 class="mb-4">Контактная информация</h5>
+
+                    <ul class="list-unstyled">
+                        <li class="d-flex justify-content-between align-items-center mb-3">
+                            <span><i class="icofont-phone mr-2"></i> Телефон:</span>
+                            <span>{{ clinic.contact_phone }}</span>
+                        </li>
+                        <li class="d-flex justify-content-between align-items-center mb-3">
+                            <span><i class="icofont-email mr-2"></i> Email:</span>
+                            <span>{{ clinic.contact_email }}</span>
+                        </li>
+                        <li class="mb-3">
+                            <span><i class="icofont-location-pin mr-2"></i> Адрес:</span>
+                            <p class="mt-2">{{ clinic.location }}</p>
+                        </li>
+                    </ul>
+
+                    <div class="sidebar-contatct-info mt-4">
+                        <p class="mb-0">Нужна помощь?</p>
+                        <h3>{{ clinic.contact_phone }}</h3>
+                    </div>
+                </div>
+
+                <div class="sidebar-widget mt-5">
+                    <h5 class="mb-4">На карте</h5>
+                    <div id="map" style="height: 300px; width: 100%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+ <!-- Main jQuery -->
+    <script src="{% static 'clinic_app/plugins/jquery/jquery.js' %}"></script>
+    <!-- Bootstrap 4.3.2 -->
+    <script src="{% static 'clinic_app/plugins/bootstrap/js/popper.js' %}"></script>
+    <script src="{% static 'clinic_app/plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'clinic_app/plugins/counterup/jquery.easing.js' %}"></script>
+    <!-- Slick Slider -->
+    <script src="{% static 'clinic_app/plugins/slick-carousel/slick/slick.min.js' %}"></script>
+    <!-- Counterup -->
+    <script src="{% static 'clinic_app/plugins/counterup/jquery.waypoints.min.js' %}"></script>
+
+    <script src="{% static 'clinic_app/plugins/shuffle/shuffle.min.js' %}"></script>
+    <script src="{% static 'clinic_app/plugins/counterup/jquery.counterup.min.js' %}"></script>
+    <!-- Google Map -->
+    <script src="{% static 'clinic_app/plugins/google-map/map.js' %}"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkeLMlsiwzp6b3Gnaxd86lvakimwGA6UA&callback=initMap"></script>
+
+    <script src="{% static 'clinic_app/js/script.js' %}"></script>
+    <script src="{% static 'clinic_app/js/contact.js' %}"></script>
+</body>
+</html>
+

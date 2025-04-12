@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'clinic_app',
     'users_app',
     'doctors_app',
+    # 'payments_app',
 ]
 
 MIDDLEWARE = [
@@ -125,7 +126,7 @@ STATICFILES_DIRS = [
 ]
 
 
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type

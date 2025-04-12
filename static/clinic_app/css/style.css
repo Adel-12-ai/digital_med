@@ -1491,3 +1491,42 @@ a:focus {
 }
 
 /*# sourceMappingURL=maps/style.css.map */
+
+
+
+
+/* Стили для карточек клиник */
+.service-block .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+}
+
+.service-block .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.placeholder-image {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    color: #6c757d;
+}
+
+/* Стили для рейтинга */
+.rating {
+    font-size: 1.2rem;
+}
+
+/* Адаптивные изображения */
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+
+/* График работы */
+.table th, .table td {
+    vertical-align: middle;
+}
