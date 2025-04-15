@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DetailView
-from clinic_app.models import Clinic, Category
+from clinic_app.models import Clinic, Category, Service
 
 
 class ClinicListView(ListView):
@@ -56,3 +56,60 @@ class CategoryListView(ListView):
 
     def get_queryset(self):
         return Category.objects.filter(is_active=True)
+
+
+class ServicesListView(ListView):
+    model = Service
+    template_name = 'clinic_app/services.html'
+    context_object_name = 'services'
+    paginate_by = 9
+
+    def get_queryset(self):
+        queryset = super().get_queryset().select_related('clinic', 'clinic__category')
+
+        # Фильтрация по активным услугам
+        queryset = queryset.filter(is_active=True)
+
+        # Фильтрация по клинике (если передан clinic_id)
+        clinic_id = self.request.GET.get('clinic_id')
+        if clinic_id:
+            queryset = queryset.filter(clinic_id=clinic_id)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['clinic_id'] = self.request.GET.get('clinic_id')
+        return context
+
+
+class ServicesDetailView(DetailView):
+    model = Service
+    template_name = 'clinic_app/service.html'
+    context_object_name = 'service'
+
+    def get_queryset(self):
+        return super().get_queryset().select_related(
+            'clinic', 'clinic__category'
+        ).prefetch_related(
+            'doctors', 'doctors__specialization'
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        service = self.object
+        context['related_services'] = Service.objects.filter(
+            clinic=service.clinic,
+            is_active=True
+        ).exclude(id=service.id)[:4]
+        return context
+
+
+# contact us
+def contact_us(request):
+    return render(request, 'clinic_app/contact.html')
+
+
+# contact us
+def about_us(request):
+    return render(request, 'clinic_app/about_us.html')

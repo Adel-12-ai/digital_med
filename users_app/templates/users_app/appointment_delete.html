@@ -1,0 +1,92 @@
+{% extends 'clinic_app/index.html' %}
+{% load static %}
+
+{% block style %}
+  {{ block.super }}
+  <style>
+    .delete-card {
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      padding: 30px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .header-delete {
+      background: linear-gradient(135deg, #dc3545 0%, #a71d2a 100%);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+    .appointment-info {
+      background-color: #f8f9fa;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 25px;
+    }
+    .info-item {
+      margin-bottom: 10px;
+    }
+    .btn-delete {
+      padding: 12px 30px;
+      border-radius: 50px;
+      font-weight: 600;
+    }
+    .btn-cancel {
+      padding: 12px 30px;
+      border-radius: 50px;
+      font-weight: 600;
+    }
+  </style>
+{% endblock style %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="delete-card">
+          <div class="header-delete">
+            <h3 class="mb-0 text-white"><i class="icofont-warning"></i> Подтверждение отмены записи</h3>
+          </div>
+          
+          <div class="appointment-info">
+            <h4 class="text-center mb-4">Вы действительно хотите отменить эту запись?</h4>
+            
+            <div class="info-item">
+              <strong>Клиника:</strong> {{ object.clinic.name }}
+            </div>
+            <div class="info-item">
+              <strong>Врач:</strong> Др. {{ object.doctor.first_name }} {{ object.doctor.last_name }}
+            </div>
+            <div class="info-item">
+              <strong>Дата:</strong> {{ object.date }} в {{ object.time|time:"H:i" }}
+            </div>
+            <div class="info-item">
+              <strong>Услуга:</strong> {{ object.service.name }}
+            </div>
+            {% if object.notes %}
+            <div class="info-item">
+              <strong>Примечания:</strong> {{ object.notes }}
+            </div>
+            {% endif %}
+          </div>
+
+          <form method="post">
+            {% csrf_token %}
+            <div class="text-center">
+              <button type="submit" class="btn btn-danger btn-delete">
+                <i class="icofont-trash"></i> Да, отменить запись
+              </button>
+              <a href="{% url 'users_app:appointment' object.id %}" class="btn btn-secondary btn-cancel">
+                <i class="icofont-close"></i> Нет, вернуться назад
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}

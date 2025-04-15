@@ -1,0 +1,265 @@
+{% extends 'clinic_app/index.html' %}
+{% load static %}
+
+{% block style %}
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="{% static 'clinic_app/images/favicon.ico' %}" />
+
+  <!-- bootstrap.min css -->
+  <link rel="stylesheet" href="{% static 'clinic_app/plugins/bootstrap/css/bootstrap.min.css' %}">
+  <!-- Icon Font Css -->
+  <link rel="stylesheet" href="{% static 'clinic_app/plugins/icofont/icofont.min.css' %}">
+  <!-- Slick Slider  CSS -->
+  <link rel="stylesheet" href="{% static 'clinic_app/plugins/slick-carousel/slick/slick.css' %}">
+  <link rel="stylesheet" href="{% static 'clinic_app/plugins/slick-carousel/slick/slick-theme.css' %}">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="{% static 'clinic_app/css/style.css' %}">
+
+  <style>
+    .category-header {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      padding: 40px 0;
+      margin-bottom: 40px;
+      border-bottom: 1px solid #dee2e6;
+    }
+    .category-title {
+      color: #e12454;
+      font-weight: 700;
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+    }
+    .category-description {
+      color: #6c757d;
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .form-group label {
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .form-control {
+      border-radius: 50px;
+      padding: 12px 20px;
+      border: 1px solid #e9ecef;
+    }
+    select.form-control {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1em;
+    }
+    @media (max-width: 768px) {
+      .category-title {
+        font-size: 1.8rem;
+      }
+      .category-description {
+        font-size: 1rem;
+      }
+    }
+  </style>
+{% endblock style %}
+
+{% block category %}
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" data-toggle="dropdown"
+       aria-haspopup="true" aria-expanded="false">
+       <i class="icofont-medical-sign-alt mr-2"></i> Категории клиник <i class="icofont-thin-down"></i>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
+        <li>
+            <a class="dropdown-item {% if not request.GET.category %}active-category{% endif %}"
+               href="{% url 'clinic_app:clinics' %}">
+               <i class="icofont-list mr-2"></i> Все категории
+            </a>
+        </li>
+        <li><div class="dropdown-divider"></div></li>
+        {% for category in categories %}
+        <li>
+            <a class="dropdown-item {% if request.GET.category == category.slug %}active-category{% endif %}"
+               href="{% url 'clinic_app:clinics' %}?category={{ category.slug }}">
+               <i class="icofont-{{ forloop.counter|add:10 }} mr-2"></i> {{ category.name }}
+            </a>
+        </li>
+        {% if not forloop.last %}
+        <li><div class="dropdown-divider"></div></li>
+        {% endif %}
+        {% empty %}
+        <li><a class="dropdown-item disabled" href="#"><i class="icofont-close-circled mr-2"></i> Нет категорий</a></li>
+        {% endfor %}
+    </ul>
+</li>
+{% endblock category %}
+
+{% block content %}
+<section class="section appoinment">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <div class="appoinment-content">
+          <img src="{% static 'clinic_app/images/about/img-3.jpg' %}" alt="" class="img-fluid">
+          <div class="emergency">
+            <h2 class="text-lg"><i class="icofont-phone-circle text-lg"></i>+23 345 67980</h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 col-md-10">
+        <div class="appoinment-wrap mt-5 mt-lg-0">
+          <h2 class="mb-2 title-color">Запись на прием</h2>
+          <p class="mb-4">Выберите клинику, врача и удобное время для записи.</p>
+
+          <form method="post" class="appoinment-form">
+            {% csrf_token %}
+
+            <!-- Вывод ошибок формы -->
+            {% if form.errors %}
+              <div class="alert alert-danger">
+                {% for field, errors in form.errors.items %}
+                  {% for error in errors %}
+                    <p>{{ error }}</p>
+                  {% endfor %}
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <div class="row">
+              <!-- Клиника -->
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label for="{{ form.clinic.id_for_label }}">Клиника</label>
+                  {{ form.clinic }}
+                </div>
+              </div>
+
+              <!-- Врач -->
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label for="{{ form.doctor.id_for_label }}">Врач</label>
+                  {{ form.doctor }}
+                </div>
+              </div>
+
+              <!-- Услуга -->
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label for="{{ form.service.id_for_label }}">Услуга</label>
+                  {{ form.service }}
+                </div>
+              </div>
+
+              <!-- Дата -->
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label for="{{ form.date.id_for_label }}">Дата</label>
+                  {{ form.date }}
+                </div>
+              </div>
+
+              <!-- Время -->
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label for="{{ form.time.id_for_label }}">Время</label>
+                  {{ form.time }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Примечания -->
+            <div class="form-group-2 mb-4">
+              <label for="{{ form.notes.id_for_label }}">Примечания</label>
+              {{ form.notes }}
+            </div>
+
+            <button type="submit" class="btn btn-main btn-round-full">
+              Записаться <i class="icofont-simple-right ml-2"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}
+
+{% block js %}
+<!-- Main jQuery -->
+<script src="{% static 'clinic_app/plugins/jquery/jquery.js' %}"></script>
+<!-- Bootstrap 4.3.2 -->
+<script src="{% static 'clinic_app/plugins/bootstrap/js/popper.js' %}"></script>
+<script src="{% static 'clinic_app/plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'clinic_app/plugins/counterup/jquery.easing.js' %}"></script>
+<!-- Slick Slider -->
+<script src="{% static 'clinic_app/plugins/slick-carousel/slick/slick.min.js' %}"></script>
+<!-- Counterup -->
+<script src="{% static 'clinic_app/plugins/counterup/jquery.waypoints.min.js' %}"></script>
+
+<script src="{% static 'clinic_app/plugins/shuffle/shuffle.min.js' %}"></script>
+<script src="{% static 'clinic_app/plugins/counterup/jquery.counterup.min.js' %}"></script>
+
+<script>
+// Дополнительный JavaScript для динамического обновления врачей при выборе клиники
+$(document).ready(function() {
+  $('#id_clinic').change(function() {
+    var clinicId = $(this).val();
+    if (clinicId) {
+      $.ajax({
+        url: '/get-doctors/',
+        data: {
+          'clinic_id': clinicId
+        },
+        success: function(data) {
+          $('#id_doctor').html(data);
+        }
+      });
+    } else {
+      $('#id_doctor').html('<option value="">Сначала выберите клинику</option>');
+    }
+  });
+});
+</script>
+<script>
+$(document).ready(function() {
+  $('#id_clinic').change(function() {
+    var clinicId = $(this).val();
+    if (clinicId) {
+      $.ajax({
+        url: "{% url 'users_app:get_doctors' %}",
+        data: {
+          'clinic_id': clinicId
+        },
+        success: function(data) {
+          $('#id_doctor').html(data);
+        }
+      });
+    } else {
+      $('#id_doctor').html('<option value="">Сначала выберите клинику</option>');
+    }
+  });
+
+  // Аналогично для услуг при выборе врача
+  $('#id_doctor').change(function() {
+    var doctorId = $(this).val();
+    if (doctorId) {
+      $.ajax({
+        url: "/get-services/",  // Нужно реализовать аналогично
+        data: {
+          'doctor_id': doctorId
+        },
+        success: function(data) {
+          $('#id_service').html(data);
+        }
+      });
+    } else {
+      $('#id_service').html('<option value="">Сначала выберите врача</option>');
+    }
+  });
+});
+</script>
+{% endblock js %}
+
+

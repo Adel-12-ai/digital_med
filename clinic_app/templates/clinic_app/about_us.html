@@ -1,0 +1,72 @@
+{% extends 'clinic_app/index.html' %}
+{% load static %}
+
+{% block style %}
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="{% static 'clinic_app/images/favicon.ico' %}" />
+
+  <!-- bootstrap.min css -->
+  <link rel="stylesheet" href="{% static 'clinic_app/plugins/bootstrap/css/bootstrap.min.css' %}">
+  <!-- Icon Font Css -->
+  <link rel="stylesheet" href="{% static 'clinic_app/plugins/icofont/icofont.min.css' %}">
+  <!-- Slick Slider  CSS -->
+  <link rel="stylesheet" href="{% static 'clinic_app/plugins/slick-carousel/slick/slick.css' %}">
+  <link rel="stylesheet" href="{% static 'clinic_app/plugins/slick-carousel/slick/slick-theme.css' %}">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="{% static 'clinic_app/css/style.css' %}">
+    <style>
+    .service-detail-img {
+      height: 400px;
+      object-fit: cover;
+      border-radius: 10px;
+      width: 100%;
+    }
+    .service-price-badge {
+      font-size: 1.5rem;
+      background: #e12454;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 50px;
+      display: inline-block;
+    }
+    .service-features i {
+      color: #e12454;
+      font-size: 1.2rem;
+      margin-right: 10px;
+    }
+    .doctor-card {
+      border: 1px solid #eee;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+    .doctor-card:hover {
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+  </style>
+{% endblock style %}
+
+
+{% block content %}
+
+{% endblock content %}
+
+
+{% block js %}
+<!-- Main jQuery -->
+<script src="{% static 'clinic_app/plugins/jquery/jquery.js' %}"></script>
+<!-- Bootstrap 4.3.2 -->
+<script src="{% static 'clinic_app/plugins/bootstrap/js/popper.js' %}"></script>
+<script src="{% static 'clinic_app/plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'clinic_app/plugins/counterup/jquery.easing.js' %}"></script>
+<!-- Slick Slider -->
+<script src="{% static 'clinic_app/plugins/slick-carousel/slick/slick.min.js' %}"></script>
+<!-- Counterup -->
+<script src="{% static 'clinic_app/plugins/counterup/jquery.waypoints.min.js' %}"></script>
+
+<script src="{% static 'clinic_app/plugins/shuffle/shuffle.min.js' %}"></script>
+<script src="{% static 'clinic_app/plugins/counterup/jquery.counterup.min.js' %}"></script>
+
+{% endblock js %}
