@@ -111,5 +111,14 @@ def contact_us(request):
 
 
 # contact us
-def about_us(request):
-    return render(request, 'clinic_app/about_us.html')
+from django.views.generic import TemplateView
+
+
+class AboutUsView(TemplateView):
+    template_name = 'clinic_app/about_us.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Можно добавить дополнительные данные в контекст
+        context['page_title'] = 'О нашей клинике'
+        return context
