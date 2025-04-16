@@ -224,7 +224,21 @@
                     <div class="sidebar-contatct-info mt-4">
                         <p class="mb-0">Нужна помощь?</p>
                         <h3>{{ clinic.contact_phone }}</h3>
-                    </div>
+                            {% if user.is_authenticated %}
+                                {% if user.role == 'doc' %}
+							<a href="{% url 'doctors_app:appointments' %}" class="btn btn-main-2 btn-icon btn-round-full">
+								Просмотреть записи клиентов <i class="icofont-simple-right ml-2"></i>
+							</a>
+						{% else %}
+							<a href="{% url 'users_app:send_appointment' %}" class="btn btn-main-2 btn-icon btn-round-full">
+								Записаться на консультацию <i class="icofont-simple-right ml-2"></i>
+							</a>
+						{% endif %}
+					{% else %}
+						<a href="{% url 'users_app:sign_user' %}?next={% url 'users_app:send_appointment' %}" class="btn btn-main-2 btn-icon btn-round-full">
+							Записаться на консультацию <i class="icofont-simple-right ml-2"></i>
+						</a>
+					{% endif %}                    </div>
                 </div>
 
                 <div class="sidebar-widget mt-5">

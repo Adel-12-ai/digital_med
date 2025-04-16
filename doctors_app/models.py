@@ -1,10 +1,5 @@
-from datetime import datetime
-
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
 
 '''
 Вот так вот получаем(для заметки написал)
@@ -33,6 +28,7 @@ class Specialization(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название специализаций')
     slug = models.SlugField(max_length=100, unique=True, verbose_name='URL-имя')
     description = models.TextField(verbose_name='Описание специализаций')
+    is_active = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
 
@@ -40,7 +36,7 @@ class Specialization(models.Model):
 
 class Doctor(models.Model):
     user = models.OneToOneField(
-        User,
+        'users_app.User',  # Use string reference
         on_delete=models.CASCADE,
         related_name='doctor_profile',
         verbose_name='Пользователь'
@@ -73,83 +69,14 @@ class Doctor(models.Model):
     class Meta:
         verbose_name = 'Врач'
         verbose_name_plural = 'Врачи'
-        ordering = ['-created_at']
 
         indexes = [
             models.Index(fields=['created_at']),
             models.Index(fields=['updated_at']),
         ]
 
-    def __str__(self):
-        return f"{self.user.username} ({self.specialization})"
 
-
-# Запись на прием
-class Appointment(models.Model):
-    STATUS_CHOICES = [
-        ('pending', 'Ожидает подтверждения'),
-        ('confirmed', 'Подтвержден'),
-        ('completed', 'Завершен'),
-        ('cancelled', 'Отменен'),
-    ]
-
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='appointments',
-        verbose_name='Пациент'
-    )
-    clinic = models.ForeignKey(
-        'clinic_app.Clinic',
-        on_delete=models.CASCADE,
-        related_name='appointments',
-        verbose_name='Клиника'
-    )
-    service = models.ForeignKey(
-        'clinic_app.Service',
-        on_delete=models.PROTECT,
-        related_name='appointments',
-        verbose_name='Услуга'
-    )
-    doctor = models.ForeignKey(
-        Doctor,
-        on_delete=models.PROTECT,
-        related_name='appointments',
-        verbose_name='Врач'
-    )
-    date = models.DateField(verbose_name='Дата приема')
-    time = models.TimeField(verbose_name='Время приема')
-    end_time = models.TimeField(verbose_name='Время окончания', blank=True, null=True)
-    status = models.CharField(
-        max_length=10,
-        choices=STATUS_CHOICES,
-        default='pending',
-        verbose_name='Статус записи'
-    )
-    notes = models.TextField(max_length=500, blank=True, verbose_name='Примечания')
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
-    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
-
-    class Meta:
-        verbose_name = 'Запись на прием'
-        verbose_name_plural = 'Записи на прием'
-        ordering = ['date', 'time']
-        indexes = [
-            models.Index(fields=['date']),
-            models.Index(fields=['status']),
-            models.Index(fields=['created_at']),
-            models.Index(fields=['updated_at']),
-        ]
-
-    def save(self, *args, **kwargs):
-        if not self.end_time and self.service:
-            from datetime import timedelta
-            self.end_time = (datetime.combine(self.date, self.time) +
-                             timedelta(minutes=self.service.duration)).time()
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f"Запись #{self.id} - {self.user.username}"
+# Запись на прием вынес в users_app service, так как записывается клиент(user)...
 
 
 
@@ -169,7 +96,7 @@ class ReviewDoctor(models.Model):
     ]
 
     user = models.ForeignKey(
-        User,
+        'users_app.User',  # Use string reference
         on_delete=models.CASCADE,
         related_name='doctor_reviews',
         verbose_name='Пользователь'

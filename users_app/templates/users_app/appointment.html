@@ -1,0 +1,147 @@
+{% extends 'clinic_app/index.html' %}
+{% load static %}
+
+{% block style %}
+  {{ block.super }}
+  <style>
+    .appointment-detail-card {
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    .appointment-header {
+      background: linear-gradient(135deg, #e12454 0%, #7a1b5c 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px 10px 0 0;
+    }
+    .status-badge {
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .status-pending {
+      background-color: #ffc107;
+      color: #212529;
+    }
+    .status-confirmed {
+      background-color: #28a745;
+      color: white;
+    }
+    .status-completed {
+      background-color: #17a2b8;
+      color: white;
+    }
+    .status-cancelled {
+      background-color: #dc3545;
+      color: white;
+    }
+    .detail-item {
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    .detail-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    .action-btns .btn {
+      margin-right: 10px;
+    }
+  </style>
+{% endblock style %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="appointment-detail-card">
+          <div class="appointment-header d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">Запись #{{ appointment.id }}</h3>
+            <span class="status-badge status-{{ appointment.status }}">
+              {{ appointment.get_status_display }}
+            </span>
+          </div>
+          <div class="card-body p-4">
+            <div class="detail-item">
+              <h4 class="mb-3">Основная информация</h4>
+              <div class="row">
+                <div class="col-md-6">
+                  <p><strong>Клиника:</strong> {{ appointment.clinic.name }}</p>
+                  <p><strong>Адрес:</strong> {{ appointment.clinic.address }}</p>
+                </div>
+                <div class="col-md-6">
+                  <p><strong>Дата:</strong> {{ appointment.date }}</p>
+                  <p><strong>Время:</strong> {{ appointment.time|time:"H:i" }} - {{ appointment.end_time|time:"H:i" }}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <h4 class="mb-3">Информация о враче</h4>
+              <div class="row">
+                <div class="col-md-6">
+                  <p><strong>Врач:</strong> Др. {{ appointment.doctor.first_name }} {{ appointment.doctor.last_name }}</p>
+                  <p><strong>Специализация:</strong> {{ appointment.doctor.specialization.name }}</p>
+                </div>
+                <div class="col-md-6">
+                  <p><strong>Опыт работы:</strong> {{ appointment.doctor.experience }} лет</p>
+                  <p><strong>Рейтинг:</strong> {{ appointment.doctor.rating }}/5</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <h4 class="mb-3">Информация об услуге</h4>
+              <div class="row">
+                <div class="col-md-6">
+                  <p><strong>Услуга:</strong> {{ appointment.service.name }}</p>
+                  <p><strong>Длительность:</strong> {{ appointment.service.duration }} мин.</p>
+                </div>
+                <div class="col-md-6">
+                  <p><strong>Цена:</strong> {{ appointment.service.price }} сом</p>
+                </div>
+              </div>
+            </div>
+
+            {% if appointment.notes %}
+            <div class="detail-item">
+              <h4 class="mb-3">Примечания</h4>
+              <p>{{ appointment.notes }}</p>
+            </div>
+            {% endif %}
+
+            <div class="detail-item">
+              <h4 class="mb-3">Дополнительная информация</h4>
+              <div class="row">
+                <div class="col-md-6">
+                  <p><strong>Дата создания:</strong> {{ appointment.created_at|date:"d.m.Y H:i" }}</p>
+                </div>
+                <div class="col-md-6">
+                  <p><strong>Последнее обновление:</strong> {{ appointment.updated_at|date:"d.m.Y H:i" }}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="action-btns mt-4 text-center">
+              <a href="{% url 'users_app:appointments' %}" class="btn btn-secondary">
+                <i class="icofont-arrow-left"></i> Назад к списку
+              </a>
+              <a href="{% url 'users_app:appointment_update' appointment.id %}" class="btn btn-main">
+                <i class="icofont-edit"></i> Изменить запись
+              </a>
+              <a href="{% url 'users_app:appointment_delete' appointment.id %}" class="btn btn-danger">
+                <i class="icofont-trash"></i> Отменить запись
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}

@@ -1,0 +1,138 @@
+{% extends 'clinic_app/index.html' %}
+{% load static %}
+
+{% block style %}
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="{% static 'clinic_app//images/favicon.ico' %}" />
+
+  <!-- bootstrap.min css -->
+  <link rel="stylesheet" href="{% static 'clinic_app/plugins/bootstrap/css/bootstrap.min.css' %}">
+  <!-- Icon Font Css -->
+  <link rel="stylesheet" href="{% static 'clinic_app/plugins/icofont/icofont.min.css' %}">
+  <!-- Slick Slider  CSS -->
+  <link rel="stylesheet" href="{% static 'clinic_app/plugins/slick-carousel/slick/slick.css' %}">
+  <link rel="stylesheet" href="{% static 'clinic_app/plugins/slick-carousel/slick/slick-theme.css' %}">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="{% static 'clinic_app/css/style.css' %}">
+{% endblock style %}
+
+{% block category %}
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" data-toggle="dropdown"
+       aria-haspopup="true" aria-expanded="false">
+       <i class="icofont-medical-sign-alt mr-2"></i> Категории клиник <i class="icofont-thin-down"></i>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
+        <li>
+            <a class="dropdown-item {% if not request.GET.category %}active-category{% endif %}"
+               href="{% url 'clinic_app:clinics' %}">
+               <i class="icofont-list mr-2"></i> Все категории
+            </a>
+        </li>
+        <li><div class="dropdown-divider"></div></li>
+        {% for category in categories %}
+        <li>
+            <a class="dropdown-item {% if request.GET.category == category.slug %}active-category{% endif %}"
+               href="{% url 'clinic_app:clinics' %}?category={{ category.slug }}">
+               <i class="icofont-{{ forloop.counter|add:10 }} mr-2"></i> {{ category.name }}
+            </a>
+        </li>
+        {% if not forloop.last %}
+        <li><div class="dropdown-divider"></div></li>
+        {% endif %}
+        {% empty %}
+        <li><a class="dropdown-item disabled" href="#"><i class="icofont-close-circled mr-2"></i> Нет категорий</a></li>
+        {% endfor %}
+    </ul>
+</li>
+{% endblock category %}
+
+{% block clinic %}
+
+
+<section class="section service-2">
+    <div class="container">
+        {% if not hide_header %}
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <div class="section-title">
+                    <h2 class="mb-4">Наши Доктора</h2>
+                    <div class="divider mx-auto my-4"></div>
+                    <p>Лучшие медицинские Доктора с проверенным опытом</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="row">
+            {% for doctor in doctors %}
+            <div class="col-lg-4 col-md-6 col-sm-6 mb-5">
+                <div class="service-block">
+                    <div class="card border-0 shadow-sm">
+                        {% if doctor.photo %}
+                        <img src="{{ doctor.photo.url }}" alt="{{ doctor.first_name }}" class="card-img-top img-fluid" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                        <div class="placeholder-image bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <span class="text-muted">Нет изображения</span>
+                        </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title mb-0">{{ doctor.first_name }}</h5>
+                                {% if doctor.is_verified %}
+                                <span class="badge badge-success">Проверенная</span>
+                                {% endif %}
+                            </div>
+                            <p class="card-text text-muted">{{ doctor.bio|truncatechars:100 }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-warning">★ {{ clinic.rating|default:"0.0" }}</span>
+                                <a href="{% url 'doctors_app:doctor' doctor.pk %}" class="btn btn-link p-0">
+                                    Подробнее <i class="icofont-simple-right ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <div class="alert alert-info">Доктора не найдены</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if is_paginated %}
+        <div class="row">
+            <div class="col-12 mt-4">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                        {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">{{ num }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock clinic %}

@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import SMSVerification
+from .models import SMSVerification, Appointment
 from django.contrib.auth import get_user_model
 
 
@@ -32,5 +32,21 @@ class VerificationUserForm(forms.ModelForm):
         if not email or not code:
             raise forms.ValidationError('Email и код подтверждения обязательны!')
         return cleaned_data
+
+
+# Форма для приема к врачу
+from django import forms
+from .models import Appointment
+
+class AppointmentForm(forms.ModelForm):
+    class Meta:
+        model = Appointment
+        fields = ['clinic', 'doctor', 'service', 'date', 'time', 'notes']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'time': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
+            'notes': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Опишите симптомы или особые пожелания...'}),
+        }
+
 
 

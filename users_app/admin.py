@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from users_app.models import SMSVerification, User, Appointment
+
+admin.site.register(User)
+admin.site.register(SMSVerification)
+admin.site.register(Appointment)

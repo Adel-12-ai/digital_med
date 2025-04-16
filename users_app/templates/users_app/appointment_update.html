@@ -1,0 +1,167 @@
+{% extends 'clinic_app/index.html' %}
+{% load static %}
+
+{% block style %}
+  {{ block.super }}
+  <style>
+    .update-card {
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      padding: 30px;
+      margin-bottom: 30px;
+    }
+    .form-group label {
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .form-control {
+      border-radius: 50px;
+      padding: 12px 20px;
+      border: 1px solid #e9ecef;
+    }
+    select.form-control {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1em;
+    }
+    textarea.form-control {
+      border-radius: 15px;
+      min-height: 120px;
+    }
+    .btn-update {
+      padding: 12px 30px;
+      border-radius: 50px;
+      font-weight: 600;
+    }
+    .header-update {
+      background: linear-gradient(135deg, #e12454 0%, #7a1b5c 100%);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+    }
+  </style>
+{% endblock style %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="update-card">
+          <div class="header-update">
+            <h3 class="mb-0 text-white">Изменение записи #{{ object.id }}</h3>
+          </div>
+          
+          <form method="post">
+            {% csrf_token %}
+            
+            <!-- Вывод ошибок формы -->
+            {% if form.errors %}
+              <div class="alert alert-danger mb-4">
+                {% for field, errors in form.errors.items %}
+                  {% for error in errors %}
+                    <p>{{ error }}</p>
+                  {% endfor %}
+                {% endfor %}
+              </div>
+            {% endif %}
+            
+            <div class="row">
+              <!-- Клиника -->
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="{{ form.clinic.id_for_label }}">Клиника</label>
+                  {{ form.clinic }}
+                </div>
+              </div>
+
+              <!-- Врач -->
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="{{ form.doctor.id_for_label }}">Врач</label>
+                  {{ form.doctor }}
+                </div>
+              </div>
+
+              <!-- Услуга -->
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="{{ form.service.id_for_label }}">Услуга</label>
+                  {{ form.service }}
+                </div>
+              </div>
+
+              <!-- Дата -->
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="{{ form.date.id_for_label }}">Дата</label>
+                  {{ form.date }}
+                </div>
+              </div>
+
+              <!-- Время -->
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="{{ form.time.id_for_label }}">Время</label>
+                  {{ form.time }}
+                </div>
+              </div>
+
+              <!-- Статус -->
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="{{ form.status.id_for_label }}">Статус</label>
+                  {{ form.status }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Примечания -->
+            <div class="form-group">
+              <label for="{{ form.notes.id_for_label }}">Примечания</label>
+              {{ form.notes }}
+            </div>
+
+            <div class="form-group mt-4 text-center">
+              <button type="submit" class="btn btn-main btn-update">
+                <i class="icofont-save"></i> Сохранить изменения
+              </button>
+              <a href="{% url 'users_app:appointment' object.id %}" class="btn btn-secondary btn-update">
+                <i class="icofont-close"></i> Отмена
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+// Скрипт для динамического обновления врачей при выборе клиники
+$(document).ready(function() {
+  $('#id_clinic').change(function() {
+    var clinicId = $(this).val();
+    if (clinicId) {
+      $.ajax({
+        url: "{% url 'users_app:get_doctors' %}",
+        data: {
+          'clinic_id': clinicId
+        },
+        success: function(data) {
+          $('#id_doctor').html(data);
+        }
+      });
+    } else {
+      $('#id_doctor').html('<option value="">Сначала выберите клинику</option>');
+    }
+  });
+});
+</script>
+{% endblock content %}

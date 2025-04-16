@@ -65,8 +65,9 @@
 			  <li class="nav-item active">
 				<a class="nav-link" href="{% url 'clinic_app:clinics' %}">Главная</a>
 			  </li>
-			   <li class="nav-item"><a class="nav-link" href="about.html">Про нас</a></li>
-			    <li class="nav-item"><a class="nav-link" href="service.html">Сервисы</a></li>
+			   <li class="nav-item"><a class="nav-link" href="{% url 'clinic_app:about_us' %}">Про нас</a></li>
+			    <li class="nav-item"><a class="nav-link" href="{% url 'clinic_app:services' %}">Сервисы</a></li>
+			    <li class="nav-item"><a class="nav-link" href="{% url 'doctors_app:doctors' %}">Доктора</a></li>
 
 			    <li class="nav-item dropdown">
 					<ul class="dropdown-menu" aria-labelledby="dropdown02">
@@ -75,8 +76,7 @@
 
 			  	<li class="nav-item dropdown">
 					<ul class="dropdown-menu" aria-labelledby="dropdown03">
-						<li><a class="dropdown-item" href="doctor.html">Доктора</a></li>
-						<li><a class="dropdown-item" href="appoinment.html">Записаться на консультацию</a></li>
+						<li><a class="dropdown-item" href="{% url 'users_app:send_appointment' %}">Записаться на консультацию</a></li>
 					</ul>
 			  	</li>
 
@@ -88,7 +88,7 @@
 					<ul class="dropdown-menu" aria-labelledby="dropdown05">
 					</ul>
 			  	</li>
-			   <li class="nav-item"><a class="nav-link" href="contact.html">Наши контакты</a></li>
+			   <li class="nav-item"><a class="nav-link" href="{% url 'clinic_app:contact_us' %}">Наши контакты</a></li>
 
 				{% if not user.is_authenticated %}
 					<li class="nav-item"><a class="nav-link" href="{% url 'users_app:sign_user' %}">Вход</a></li>
@@ -107,56 +107,22 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-lg-6 col-md-12 col-xl-7">
-				<div class="block">
-					<div class="divider mb-3"></div>
-					<span class="text-uppercase text-sm letter-spacing ">Добро пожаловать в наш Сервис</span>
-					<h1 class="mb-3 mt-3">DIGITAL MED</h1>
-
-					<p class="mb-4 pr-5">Добро пожаловать в наш Сервис</p>
-					<div class="btn-container ">
-						<a href="appoinment.html" target="_blank" class="btn btn-main-2 btn-icon btn-round-full">Записаться на консультацию <i class="icofont-simple-right ml-2  "></i></a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</section>
-<section class="features">
-	<div class="container">
-		<div class="row">
-			<div class="col-lg-12">
-				<div class="feature-block d-lg-flex">
-					<div class="feature-item mb-5 mb-lg-0">
-						<div class="feature-icon mb-4">
-							<i class="icofont-surgeon-alt"></i>
-						</div>
-						<span>24 Hours Service</span>
-						<h4 class="mb-3">Online Appoinment</h4>
-						<p class="mb-4">Get ALl time support for emergency.We have introduced the principle of family medicine.</p>
-						<a href="appoinment.html" class="btn btn-main btn-round-full">Make a appoinment</a>
-					</div>
-
-					<div class="feature-item mb-5 mb-lg-0">
-						<div class="feature-icon mb-4">
-							<i class="icofont-ui-clock"></i>
-						</div>
-						<span>Timing schedule</span>
-						<h4 class="mb-3">Working Hours</h4>
-						<ul class="w-hours list-unstyled">
-		                    <li class="d-flex justify-content-between">Sun - Wed : <span>8:00 - 17:00</span></li>
-		                    <li class="d-flex justify-content-between">Thu - Fri : <span>9:00 - 17:00</span></li>
-		                    <li class="d-flex justify-content-between">Sat - sun : <span>10:00 - 17:00</span></li>
-		                </ul>
-					</div>
-
-					<div class="feature-item mb-5 mb-lg-0">
-						<div class="feature-icon mb-4">
-							<i class="icofont-support"></i>
-						</div>
-						<span>Emegency Cases</span>
-						<h4 class="mb-3">1-800-700-6200</h4>
-						<p>Get ALl time support for emergency.We have introduced the principle of family medicine.Get Conneted with us for any urgency .</p>
-					</div>
+				<div class="btn-container">
+					{% if user.is_authenticated %}
+						{% if user.role == 'doc' %}
+							<a href="{% url 'doctors_app:appointments' %}" class="btn btn-main-2 btn-icon btn-round-full">
+								Просмотреть записи клиентов <i class="icofont-simple-right ml-2"></i>
+							</a>
+						{% else %}
+							<a href="{% url 'users_app:send_appointment' %}" class="btn btn-main-2 btn-icon btn-round-full">
+								Записаться на консультацию <i class="icofont-simple-right ml-2"></i>
+							</a>
+						{% endif %}
+					{% else %}
+						<a href="{% url 'users_app:sign_user' %}?next={% url 'users_app:send_appointment' %}" class="btn btn-main-2 btn-icon btn-round-full">
+							Записаться на консультацию <i class="icofont-simple-right ml-2"></i>
+						</a>
+					{% endif %}
 				</div>
 			</div>
 		</div>
@@ -165,6 +131,9 @@
 	{% block clinic %}
 
 	{% endblock clinic %}
+
+	{% block content %}
+	{% endblock content %}
 
 <!-- footer Start -->
 <footer class="footer section gray-bg">
